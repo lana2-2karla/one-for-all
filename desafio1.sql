@@ -2,13 +2,19 @@ DROP DATABASE IF EXISTS SpotifyClone;
 
 CREATE DATABASE SpotifyClone;
 
+CREATE TABLE SpotifyClone.plano_de_assinaturas(
+    assinatura_id INT PRIMARY KEY AUTO_INCREMENT,
+    assinatura_nome VARCHAR(50) NOT NULL,
+    valor DECIMAL NOT NULL
+) engine = InnoDB;
+
 CREATE TABLE SpotifyClone.usuarios(
     usuario_id INT PRIMARY KEY AUTO_INCREMENT,
     usuario_nome VARCHAR(50) NOT NULL,
     usuario_idade INT NOT NULL,
     data_de_assinatura DATE NOT NULL,
     assinatura_id INT NOT NULL,
-    FOREIGN KEY(assinatura_id) REFERENCES usuarios(assinatura_id)
+    FOREIGN KEY(assinatura_id) REFERENCES plano_de_assinaturas(assinatura_id)
 ) engine = InnoDB;
 
 CREATE TABLE SpotifyClone.artistas(
@@ -20,7 +26,7 @@ CREATE TABLE SpotifyClone.albuns(
     artista_id INT NOT NULL,
     album_id INT PRIMARY KEY AUTO_INCREMENT,
     album_nome VARCHAR(50) NOT NULL,
-    FOREIGN KEY(artista_id) REFERENCES usuarios(artista_id)
+    FOREIGN KEY(artista_id) REFERENCES artistas(artista_id)
 ) engine = InnoDB;
 
 CREATE TABLE SpotifyClone.musicas(
@@ -29,7 +35,7 @@ CREATE TABLE SpotifyClone.musicas(
     duracao_em_segundos INT NOT NULL,
     ano_de_lancamento INT NOT NULL,
     album_id INT NOT NULL,
-    FOREIGN KEY(album_id) REFERENCES usuarios(album_id)
+    FOREIGN KEY(album_id) REFERENCES albuns(album_id)
 ) engine = InnoDB;
 
 CREATE TABLE SpotifyClone.usuarios_musicas(
@@ -38,7 +44,7 @@ CREATE TABLE SpotifyClone.usuarios_musicas(
     data_de_reproducao VARCHAR(50) NOT NULL,
     PRIMARY KEY(usuario_id, musica_id),
     FOREIGN KEY(usuario_id) REFERENCES usuarios(usuario_id),
-    FOREIGN KEY(musica_id) REFERENCES usuarios(musica_id)
+    FOREIGN KEY(musica_id) REFERENCES musicas(musica_id)
 ) engine = InnoDB;
 
 CREATE TABLE SpotifyClone.usuarios_artistas(
@@ -46,27 +52,28 @@ CREATE TABLE SpotifyClone.usuarios_artistas(
     artista_id INT NOT NULL,
     PRIMARY KEY(usuario_id, artista_id),
     FOREIGN KEY(usuario_id) REFERENCES usuarios(usuario_id),
-    FOREIGN KEY(artista_id) REFERENCES usuarios(artista_id)
+    FOREIGN KEY(artista_id) REFERENCES artistas(artista_id)
 ) engine = InnoDB;
 
-CREATE TABLE SpotifyClone.plano_de_assinaturas(
-    assinatura_id INT PRIMARY KEY AUTO_INCREMENT,
-    assinatura_nome VARCHAR(50) NOT NULL,
-    valor DECIMAL NOT NULL,
-) engine = InnoDB;
-
+INSERT INTO SpotifyClone.plano_de_assinaturas (assinatura_nome, valor)
+VALUES
+  ('gratuito', '0.00'),   
+  ('familiar', '7.99'),   
+  ('universitário', '5.99'),   
+  ('pessoal', '6.99');
+  
 INSERT INTO SpotifyClone.usuarios (usuario_nome, usuario_idade, assinatura_id, data_de_assinatura)
 VALUES
   ('Thati', '23', '1', '2019-10-20'),
   ('Cintia', '35', '2', '2017-12-30'),
   ('Bill', '20', '3', '2019-06-05'),
   ('Roger', '45', '4', '2020-05-13'),
-  ('Norman', '58', '5', '2017-02-17'),
-  ('Patrick', '33', '6', '2017-01-06'),
-  ('Vivian', '26', '7', '2018-01-05'),
-  ('Carol', '19', '8', '2018-02-14'),
-  ('Angelina', '42', '9', '2018-04-29'),
-  ('Paul', '46', '10', '2017-01-17');
+  ('Norman', '58', '4', '2017-02-17'),
+  ('Patrick', '33', '2', '2017-01-06'),
+  ('Vivian', '26', '3', '2018-01-05'),
+  ('Carol', '19', '3', '2018-02-14'),
+  ('Angelina', '42', '2', '2018-04-29'),
+  ('Paul', '46', '2', '2017-01-17');
 
 INSERT INTO SpotifyClone.artistas (artista_nome)
 VALUES
@@ -80,21 +87,21 @@ VALUES
 INSERT INTO SpotifyClone.albuns (artista_id, album_nome)
 VALUES
   ('1', 'Envious'),     
-  ('2', 'Exuberant'),
-  ('3', 'Hallowed Steam'),
-  ('4', 'Incandescent'),
-  ('5', 'Temporary Culture'),
-  ('6', 'Library of liberty'),
-  ('7', 'Chained Down'),
-  ('8', 'Cabinet of fools'),
-  ('9', 'No guarantees'),
-  ('10', 'Apparatus');
+  ('1', 'Exuberant'),
+  ('2', 'Hallowed Steam'),
+  ('3', 'Incandescent'),
+  ('4', 'Temporary Culture'),
+  ('4', 'Library of liberty'),
+  ('5', 'Chained Down'),
+  ('5', 'Cabinet of fools'),
+  ('5', 'No guarantees'),
+  ('6', 'Apparatus');
 
 INSERT INTO SpotifyClone.musicas (album_id, musica_nome, duracao_em_segundos, ano_de_lancamento)
 VALUES
   ('1', 'Soul For Us', '200', '1990'),       
-  ('1', 'Reflections Of Magic', '163' '1990'),
-  ('1', 'Dance With Her Own', '116' '1990'),
+  ('1', 'Reflections Of Magic', '163', '1990'),
+  ('1', 'Dance With Her Own', '116', '1990'),
   ('2', 'Troubles Of My Inner Fire', '203', '1993'),
   ('2', 'Time Fireworks', '152', '1993'),
   ('3', 'Magic Circus', '105', '1995'),
@@ -124,7 +131,7 @@ VALUES
   ('8', "He Hopes We Can't Stay", '210', '2012'),
   ('8', 'I Know I Know', '117', '2012'),
   ('9', "He's Walking Away", '159', '2015'),
-  ('9', "He's Trouble", '138'),
+  ('9', "He's Trouble", '138', 2015),
   ('9', 'I Heard I Want To Bo Alone', '120', '2015'),
   ('9', 'I Ride Alone', '151', '2015'),
   ('10', 'Honey', '79', '2015'),
@@ -137,7 +144,7 @@ VALUES
 VALUES
   ('1', '36', '2020-02-28 10:45:55'),     
   ('1', '25', '2020-05-02 05:30:35'),
-  ('1'. '23', '2020-03-06 11:22:33'),
+  ('1', '23', '2020-03-06 11:22:33'),
   ('1', '14', '2020-08-05 08:05:17'),
   ('1', '15', '2020-09-14 16:32:22'),
   ('2', '34', '2020-01-02 07:40:33'),
@@ -199,16 +206,4 @@ VALUES
   ('10', '2'),  
   ('10', '6');
 
-  INSERT INTO SpotifyClone.plano_de_assinaturas (assinatura_nome, valor)
-VALUES
-  ('gratuito', '0.00'),   
-  ('familiar', '7.99'),   
-  ('universitário', '5.99'),   
-  ('pessoal', '6.99'),   
-  ('pessoal', '6.99'),   
-  ('familiar', '7.99'),   
-  ('universitário', '5.99'),   
-  ('universitário', '5.99'),  
-  ('familiar', '7.99'), 
-  ('familiar', '7.99');
   
